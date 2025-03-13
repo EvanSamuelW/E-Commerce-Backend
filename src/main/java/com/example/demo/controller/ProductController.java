@@ -36,7 +36,6 @@ public class ProductController {
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") float price,
-            @RequestParam("rating") float rating,
             @RequestParam("availableSizes") String[] availableSizes,
             @RequestParam("availableColors") String[] availableColors,
             @RequestParam("image") MultipartFile imageFile) {
@@ -50,7 +49,6 @@ public class ProductController {
             product.setName(name);
             product.setDescription(description);
             product.setPrice(price);
-            product.setRating(rating);
             product.setProductSizes(availableSizes);
             product.setProductColors(availableColors);
             product.setImage(imageUrl);  // Store the image URL in the database
@@ -61,13 +59,13 @@ public class ProductController {
                     product.getDescription(),
                     product.getImage(),
                     product.getPrice(),
-                    product.getRating(),
                     product.getProductSizes(),
                     product.getProductColors()
             );
 
             return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
         } catch (IOException e) {
+            System.out.println("Exception: "+ e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

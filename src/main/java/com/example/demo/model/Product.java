@@ -23,7 +23,6 @@ public class Product {
     private String description;
     private String image;
     private float price;
-    private float rating;
 
     @ElementCollection
     private String[] productSizes;

@@ -17,14 +17,13 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product createProduct(String name, String description, String image, float price, float rating, String[] availableSizes, String[] availableColors) {
+    public Product createProduct(String name, String description, String image, float price, String[] availableSizes, String[] availableColors) {
         // Create a new Product object
         Product product = new Product();
         product.setName(name);
         product.setDescription(description);
         product.setImage(image);
         product.setPrice(price);
-        product.setRating(rating);
         product.setProductSizes(availableSizes);
         product.setProductColors(availableColors);
 
