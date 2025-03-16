@@ -24,7 +24,6 @@ public class CartItem {
     private Cart cart;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     @JoinColumn(name = "product_id", nullable = false)
     private Product product; // Assuming you have a Product entity
 

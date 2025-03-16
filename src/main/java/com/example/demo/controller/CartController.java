@@ -2,8 +2,10 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.model.AddItemRequest;
 import com.example.demo.model.ApiSuccessResponse;
 import com.example.demo.model.CartItem;
+import com.example.demo.model.UpdateCartRequest;
 import com.example.demo.service.CartService;
 import com.example.demo.service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/carts")
-@CrossOrigin(origins = "http://localhost:3000")
-
 public class CartController {
 
 
@@ -38,31 +38,28 @@ public class CartController {
 
 
     @PostMapping("/add-item")
-    public ResponseEntity<ApiSuccessResponse> createCart(@RequestHeader("Authorization") String authorizationHeader, @RequestParam("productId") Long productId ,
-                                               @RequestParam("choosenColor") String choosen_color,
-                                               @RequestParam("choosenSize") String choosen_size) {
-
+    public ResponseEntity<ApiSuccessResponse> createCart(@RequestHeader("Authorization") String authorizationHeader,
+                                                         @RequestBody AddItemRequest addItemRequest) {
+        // Extract the token
         String token = authorizationHeader.replace("Bearer ", "").trim();
-        System.out.println("Token: "+token);
+        System.out.println("Token: " + token);
+
         // Step 3: Save the product to the database
-        ApiSuccessResponse savedItem = cartService.addItemToCart(token,productId, choosen_color, choosen_size
-        );
+        ApiSuccessResponse savedItem = cartService.addItemToCart(token, addItemRequest.getProductId(),
+                addItemRequest.getChoosenColor(), addItemRequest.getChoosenSize());
 
         return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
-
-
     }
 
 
     @PutMapping("/update")
     public ResponseEntity<ApiSuccessResponse> updateCart(@RequestHeader("Authorization") String authorizationHeader,
-                                                         @RequestParam("quantity") int quantity,
-                                                         @RequestParam("cartItemId") Long cartItemId) {
+                                                         @RequestBody UpdateCartRequest updateCartRequest) {
 
         String token = authorizationHeader.replace("Bearer ", "").trim();
         System.out.println("Token: "+token);
         // Step 3: Save the product to the database
-        ApiSuccessResponse savedItem = cartService.updateCart(cartItemId,quantity
+        ApiSuccessResponse savedItem = cartService.updateCart(updateCartRequest.getCartItemId(),updateCartRequest.getQuantity()
         );
 
         return new ResponseEntity<>(savedItem, HttpStatus.CREATED);

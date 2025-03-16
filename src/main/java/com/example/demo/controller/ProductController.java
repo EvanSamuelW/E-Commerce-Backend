@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Product;
+import com.example.demo.model.ProductCategory;
 import com.example.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,6 +101,17 @@ public class ProductController {
     @GetMapping("/{id}")
     public Optional<Product> getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
+    }
+
+    @GetMapping("/categories")
+    public List<ProductCategory> getProductCategory() {
+        return productService.getAllProductCategory();
+    }
+
+    @PostMapping("/categories/create")
+    public ProductCategory createProductCategory( @RequestParam("name") String name,
+                                                  @RequestParam("description") String description) {
+        return productService.createProductCategory(name, description);
     }
 
     @GetMapping("/recommended-item")

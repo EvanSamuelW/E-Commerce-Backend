@@ -6,6 +6,7 @@ import com.example.demo.repository.CartRepo;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepo;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class CartService {
             System.out.println("Cart not found");
             return new ArrayList<>();
         }else{
-            return cartItemRepo.findByCartId(cart.get().getId());
+            return cartItemRepo.findByCartIdWithProduct(cart.get().getId());
         }
     }
 
