@@ -22,6 +22,9 @@ public class TransactionService {
     private CartRepo cartRepo;
 
     @Autowired
+    private RatingRepo ratingRepo;
+
+    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
@@ -32,13 +35,19 @@ public class TransactionService {
 
     public List<Transaction> getTransactionListByUserId(String token) {
         Long userId = jwtService.extractUserId(token);
-        System.out.println("Checking transaction table");
-       return transactionRepo.findByUserId(userId);
+        List<Transaction> transactions = transactionRepo.findByUserId(userId);
+        transactions.forEach((e)->{
+            List<Rating> ratings = ratingRepo.findByTransactionId(e.getId());
+            e.getCart().getCartItems().forEach((cartItem) -> cartItem.setIsReviewed(ratings.stream()
+                    .anyMatch(t -> t.getCartItem().getCartItemId().equals(cartItem.getCartItemId()))));
+        });
+
+        return transactions;
     }
 
 
     @Transactional
-    public ApiSuccessResponse createTransaction(String token, Long cartId, Long productId, String shippingAddress, String billingAddress, Long totalAmount, String paymentMethod ) {
+    public ApiSuccessResponse createTransaction(String token, Long cartId, String shippingAddress, String billingAddress, Float totalAmount, String paymentMethod ) {
         // Fetch the user by their ID
         Long userId = jwtService.extractUserId(token);
 
@@ -46,17 +55,13 @@ public class TransactionService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + productId));
 
 
-        Cart cart =  cartRepo.findCartByUserIdAndStatus(userId, "active") .orElseThrow(() -> new RuntimeException("Cart not found with ID: " + cartId));;
+        Cart cart =  cartRepo.findCartByUserIdAndStatus(userId, "active") .orElseThrow(() -> new RuntimeException("Cart not found with ID: " + cartId));
 
         Transaction transaction = new Transaction();
-
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setTransactionStatus("In Process");
-        transaction.setProducts(product);
         transaction.setUser(user);
         transaction.setPaymentMethod(paymentMethod);
         transaction.setTotalAmount(totalAmount);
@@ -64,7 +69,12 @@ public class TransactionService {
         transaction.setShippingAddress(shippingAddress);
         transaction.setCart(cart);
 
+
         transactionRepo.save(transaction);
+
+
+        cart.setStatus("Completed");
+        cartRepo.save(cart);
 
         ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse();
         apiSuccessResponse.setStatus("SUCCESS");

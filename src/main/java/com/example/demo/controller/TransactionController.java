@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.AddTransactionRequest;
 import com.example.demo.model.ApiSuccessResponse;
 import com.example.demo.model.Transaction;
 import com.example.demo.service.JWTService;
@@ -13,8 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
-@CrossOrigin(origins = "http://localhost:3001")
-
 public class TransactionController {
 
     @Autowired
@@ -34,17 +33,12 @@ public class TransactionController {
 
     @PostMapping("/create")
     public ResponseEntity<ApiSuccessResponse> createTransaction(@RequestHeader("Authorization") String authorizationHeader,
-                                                                @RequestParam("productId") Long productId ,
-                                                                @RequestParam("cartId") Long cartId,
-                                                                @RequestParam("shippingAddress") String shippingAddress,
-                                                                @RequestParam("billingAddress") String billingAddress,
-                                                                @RequestParam("totalAmount") Long totalAmount,
-                                                                @RequestParam("paymentMethod") String paymentMethod)
+                                                                @RequestBody AddTransactionRequest addTransactionRequest)
     {
         String token = authorizationHeader.replace("Bearer ", "").trim();
         System.out.println("Token: "+token);
         // Step 3: Save the product to the database
-        ApiSuccessResponse savedItem = transactionService.createTransaction(token, cartId, productId, shippingAddress, billingAddress, totalAmount, paymentMethod
+        ApiSuccessResponse savedItem = transactionService.createTransaction(token, addTransactionRequest.getCartId(), addTransactionRequest.getShippingAddress(), addTransactionRequest.getBillingAddress(), addTransactionRequest.getTotalAmount(), addTransactionRequest.getPaymentMethod()
         );
 
         return new ResponseEntity<>(savedItem, HttpStatus.CREATED);

@@ -43,7 +43,7 @@ public class CartService {
             System.out.println("Cart not found");
             return new ArrayList<>();
         }else{
-            return cartItemRepo.findByCartIdWithProduct(cart.get().getId());
+            return cartItemRepo.findByCart_CartId(cart.get().getCartId());
         }
     }
 
@@ -78,7 +78,7 @@ public class CartService {
         }
 
 
-        Optional<CartItem> cartItem = cartItemRepo.findByCartIdAndProductIdAndChosenColorAndChosenSize(createdCart.getId(), productId, chosenColor, chosenSize);
+        Optional<CartItem> cartItem = cartItemRepo.findByCart_CartIdAndProductIdAndChosenColorAndChosenSize(createdCart.getCartId(), productId, chosenColor, chosenSize);
 
         if (cartItem.isPresent())  throw new RuntimeException("Product Already inside cart");
 

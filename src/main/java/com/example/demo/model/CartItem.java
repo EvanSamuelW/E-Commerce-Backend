@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "cart_items")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})  // Ignore the Hibernate lazy loader properties
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 public class CartItem {
@@ -18,14 +18,14 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartItemId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)  // Keep it LAZY to avoid loading the entire Cart
     @JoinColumn(name = "cart_id", nullable = false)
+    @JsonIgnore  // Prevent serialization of the Cart object
     private Cart cart;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product; // Assuming you have a Product entity
+    private Product product;
 
     @Column(nullable = false)
     private LocalDateTime addedAt = LocalDateTime.now();
@@ -39,5 +39,23 @@ public class CartItem {
     @Column(name = "chosen_size")
     private String chosenSize;
 
+    @Transient
+    private Long cartId;
+
+    @Transient
+    private boolean isReviewed;
+
+    // Getter to initialize cartId only when needed
+    public Long getCartId() {
+        if (this.cart != null) {
+            return this.cart.getCartId();
+        }
+        return null;
+    }
+
+    public void setIsReviewed(boolean isReviewed) {
+        this.isReviewed = isReviewed; // You can manually set the value of the transient field
+    }
 
 }
+

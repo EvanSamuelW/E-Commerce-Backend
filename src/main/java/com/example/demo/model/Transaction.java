@@ -24,15 +24,11 @@ public class Transaction {
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product products;
-
-    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
     @Column(name = "total_amount")
-   private Long totalAmount;
+   private Float totalAmount;
 
     @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
@@ -48,6 +44,7 @@ public class Transaction {
 
     @Column(name = "billing_address")
     private String billingAddress;
+
 
 
 
